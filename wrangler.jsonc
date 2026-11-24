@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "revora",
+  "compatibility_date": "2026-11-01",
+  "build": {
+    "command": "cd revora && npm install && npm run build"
+  },
+  "assets": {
+    "directory": "./revora/out",
+    "not_found_handling": "single-page-application"
+  }
+}

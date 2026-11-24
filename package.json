@@ -1,4 +1,11 @@
 {
+  "name": "revora",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd revora && npm install && npm run build",
+    "deploy": "wrangler deploy"
+  },
   "devDependencies": {
     "wrangler": "^4.166.0"
   },

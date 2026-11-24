@@ -145,11 +145,11 @@ export default function VehicleDetailClient() {
             {/* Image Stage */}
             <div className="relative aspect-[16/10] bg-gray-900 rounded-2xl overflow-hidden shadow-sm">
               <img
-                src={vehicle.featuredImage || '/images/cars/camry-hero.png'}
+                src={vehicle.image || '/images/cars/camry-hero.png'}
                 alt={`${vehicle.make} ${vehicle.model}`}
                 className="w-full h-full object-cover"
               />
-              {vehicle.isInspected && (
+              {vehicle.isVerified && (
                 <div className="absolute top-4 left-4 bg-emerald-600/95 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-md">
                   <ShieldCheck className="w-4 h-4" />
                   150-Point Certified Inspected
@@ -172,7 +172,7 @@ export default function VehicleDetailClient() {
                   <Gauge className="w-5 h-5 text-[#4C6D8B]" />
                   <div>
                     <span className="text-xs text-[#585E64] block">Mileage</span>
-                    <span className="text-sm font-bold text-[#111214]">{vehicle.mileageKm.toLocaleString()} km</span>
+                    <span className="text-sm font-bold text-[#111214]">{vehicle.mileage.toLocaleString()} km</span>
                   </div>
                 </div>
                 <div className="p-3 bg-[#FAFAFA] rounded-xl flex items-center gap-3">
@@ -193,11 +193,11 @@ export default function VehicleDetailClient() {
             </div>
 
             {/* Vehicle Features */}
-            {vehicle.features && vehicle.features.length > 0 && (
+            {(vehicle as any).features && (vehicle as any).features.length > 0 && (
               <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB] shadow-sm">
                 <h3 className="text-base font-bold text-[#111214] mb-4">Key Features & Inclusions</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {vehicle.features.map((feature, idx) => (
+                  {((vehicle as any).features as string[]).map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-sm text-[#111214]">
                       <div className="w-4 h-4 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -259,11 +259,11 @@ export default function VehicleDetailClient() {
               </h4>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#4C6D8B]/10 text-[#4C6D8B] flex items-center justify-center font-bold">
-                  {vehicle.sellerType === 'dealer' ? <Building2 className="w-5 h-5" /> : <UserIcon className="w-5 h-5" />}
+                  {vehicle.sellerType === 'Verified Dealership' ? <Building2 className="w-5 h-5" /> : <UserIcon className="w-5 h-5" />}
                 </div>
                 <div>
                   <span className="text-sm font-bold text-[#111214] block">
-                    {vehicle.sellerType === 'dealer' ? vehicle.dealershipName || 'Certified Partner' : 'Individual Seller'}
+                    {vehicle.sellerName || 'Verified Seller'}
                   </span>
                   <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                     <Check className="w-3 h-3" /> REVORA Verified
