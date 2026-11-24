@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' ||
+        request.auth.token.role == 'super_admin'
+      );
+    }
+
+    // =========================================================================
+    // USERS COLLECTION (users/{userId})
+    // =========================================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // BUYER PROFILES (buyerProfiles/{userId})
+    // =========================================================================
+    match /buyerProfiles/{userId} {
+      allow read, create, update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // BUYER PERSONAL STORES (favourites, comparisons, savedSearches, recentlyViewed, notifications)
+    // =========================================================================
+    match /favourites/{userId}/items/{vehicleId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /comparisons/{userId}/items/{vehicleId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /savedSearches/{userId}/items/{searchId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /recentlyViewed/{userId}/items/{vehicleId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /notifications/{userId}/items/{notificationId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // =========================================================================
+    // VEHICLES COLLECTION (vehicles/{vehicleId})
+    // =========================================================================
+    match /vehicles/{vehicleId} {
+      // Approved listings are readable by everyone
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (
+        resource.data.sellerUid == request.auth.uid || isAdmin()
+      );
+    }
+
+    // =========================================================================
+    // DEALERSHIPS COLLECTION (dealerships/{dealershipId})
+    // =========================================================================
+    match /dealerships/{dealershipId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // ENQUIRIES & TEST DRIVES
+    // =========================================================================
+    match /enquiries/{enquiryId} {
+      allow create: if isAuthenticated() && request.resource.data.buyerUid == request.auth.uid;
+      allow read: if isAuthenticated() && (
+        resource.data.buyerUid == request.auth.uid ||
+        resource.data.sellerUid == request.auth.uid ||
+        isAdmin()
+      );
+      allow update: if isAuthenticated() && (
+        resource.data.buyerUid == request.auth.uid ||
+        resource.data.sellerUid == request.auth.uid ||
+        isAdmin()
+      );
+    }
+
+    match /testDrives/{testDriveId} {
+      allow create: if isAuthenticated() && request.resource.data.buyerUid == request.auth.uid;
+      allow read: if isAuthenticated() && (
+        resource.data.buyerUid == request.auth.uid ||
+        resource.data.sellerUid == request.auth.uid ||
+        isAdmin()
+      );
+      allow update: if isAuthenticated() && (
+        resource.data.buyerUid == request.auth.uid ||
+        resource.data.sellerUid == request.auth.uid ||
+        isAdmin()
+      );
+    }
+
+    // =========================================================================
+    // INSPECTIONS (inspections/{inspectionId})
+    // =========================================================================
+    match /inspections/{inspectionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "wrangler": "^4.166.0"
+  },
+  "dependencies": {
+    "cloudflared": "^0.7.3"
+  }
+}
